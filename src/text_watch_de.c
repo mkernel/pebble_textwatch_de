@@ -1,7 +1,7 @@
 #include "pebble_os.h"
 #include "pebble_app.h"
 #include "pebble_fonts.h"
-
+#include "resource_ids.auto.h"
 
 #define MY_UUID { 0xF8, 0xA9, 0x5B, 0x9A, 0x9F, 0x8C, 0x4A, 0x5B, 0xA9, 0xFE, 0xF9, 0x7A, 0x3A, 0xE9, 0x4F, 0x3A }
 PBL_APP_INFO(MY_UUID,
@@ -58,6 +58,15 @@ char * minutesException[] = {
 
 char * minutesBigcomps[]={
   "",//0
+  "zehn",//1
+  "zwanzig",//2
+  "dreißig",//3
+  "vierzig",//4
+  "fünfzig"//5
+};
+
+char * minutesBigcompsSolo[]={
+  "",//0
   "Zehn",//1
   "Zwanzig",//2
   "Dreißig",//3
@@ -65,7 +74,9 @@ char * minutesBigcomps[]={
   "Fünfzig"//5
 };
 
+
 char *minutesbuilding[]={
+  "",//0
   "",//zehn
   "und",//zwanzig
   "und",//dreißig
@@ -93,7 +104,7 @@ void fillMinutes(unsigned int minute_time, char *firstLine, char *secondLine)
     char *thirdpart;
     if(smallpart==0)
     {
-      firstpart=minutesBigcomps[bigpart];
+      firstpart=minutesBigcompsSolo[bigpart];
       secondpart="";
       thirdpart="";
     }
@@ -142,10 +153,27 @@ void updateTime(unsigned int hour, unsigned int minute)
 void handle_init(AppContextRef ctx) {
   (void)ctx;
 
+  resource_init_current_app(&APP_RESOURCES);
+
   window_init(&window, "Text Watch");
-  text_layer_init(&firstLayer,GRect(0,0,144,20));
-  text_layer_init(&secondLayer,GRect(0,20,144,20));
-  text_layer_init(&thirdLayer,GRect(0,40,144,20));
+  window_set_background_color(&window,GColorBlack);
+
+  text_layer_init(&firstLayer,GRect(0,20,144,45));
+  text_layer_set_background_color(&firstLayer,GColorBlack);
+  text_layer_set_text_color(&firstLayer,GColorWhite);
+  text_layer_set_font(&firstLayer,fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
+
+  text_layer_init(&secondLayer,GRect(0,65,144,35));
+  text_layer_set_background_color(&secondLayer,GColorBlack);
+  text_layer_set_text_color(&secondLayer,GColorWhite);
+  GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_30));
+  text_layer_set_font(&secondLayer,font);
+
+  text_layer_init(&thirdLayer,GRect(0,100,144,35));
+  text_layer_set_background_color(&thirdLayer,GColorBlack);
+  text_layer_set_text_color(&thirdLayer,GColorWhite);
+  text_layer_set_font(&thirdLayer,font);
+
   layer_add_child(&window.layer,&firstLayer.layer);
   layer_add_child(&window.layer,&secondLayer.layer);
   layer_add_child(&window.layer,&thirdLayer.layer);

@@ -1,11 +1,16 @@
 
-{"friendlyVersion": "VERSION",
- "versionDefName": "VERSION",
+{"friendlyVersion": "APP_RESOURCES",
+ "versionDefName": "APP_RESOURCES",
  "media": [
 	   {
 	    "type":"raw",
 	    "defName":"DUMMY",
 	    "file":"resource_map.json"
+	   },
+	   {
+	   	"type":"font",
+	   	"defName":"SUBHEADINGFONT_30",
+	   	"file":"GothamLight.ttf"
 	   }
 	  ]
 }
