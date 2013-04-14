@@ -166,7 +166,7 @@ void handle_init(AppContextRef ctx) {
   text_layer_init(&secondLayer,GRect(0,65,144,35));
   text_layer_set_background_color(&secondLayer,GColorBlack);
   text_layer_set_text_color(&secondLayer,GColorWhite);
-  GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_30));
+  GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_28));
   text_layer_set_font(&secondLayer,font);
 
   text_layer_init(&thirdLayer,GRect(0,100,144,35));
@@ -181,7 +181,7 @@ void handle_init(AppContextRef ctx) {
   PblTm tick_time;
 
   get_time(&tick_time);
-  updateTime(tick_time.tm_hour,tick_time.tm_min);
+  updateTime(tick_time.tm_hour,/*tick_time.tm_min*/57);
 
   window_stack_push(&window, true /* Animated */);
 }
