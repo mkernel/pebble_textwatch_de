@@ -17,7 +17,7 @@ TextLayer thirdLayer;
 
 char *hours[]={
   "Zwölf",
-  "Ein",
+  "Eins",
   "Zwei",
   "Drei",
   "Vier",
@@ -32,7 +32,7 @@ char *hours[]={
 
 char *hoursException[]={
   NULL,
-  "Eins"
+  "Ein"
 };
 
 char * minutes[] = {
@@ -117,6 +117,15 @@ void fillMinutes(unsigned int minute_time, char *firstLine, char *secondLine)
       }
       secondpart=minutesbuilding[bigpart];
       thirdpart=minutesBigcomps[bigpart];
+
+      if(smallpart==6 && bigpart==1)
+      {
+        firstpart="Sech";
+      }
+      else if(smallpart==7 && bigpart==1)
+      {
+        firstpart="Sieb";
+      }
     }
     strcpy(firstLine,"");
     strcpy(secondLine,"");
@@ -130,7 +139,7 @@ void fillHours(unsigned int hour_time,unsigned int minute_time, char *line)
 {
   strcpy(line,"");
   hour_time=hour_time%12;
-  if(minute_time==0 && hour_time<(sizeof(hoursException)/sizeof(hoursException[0])))
+  if(minute_time==0 && hour_time<(sizeof(hoursException)/sizeof(hoursException[0])) && hoursException[hour_time]!=NULL)
   {
     strcpy(line,hoursException[hour_time]);
   }
