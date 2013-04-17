@@ -172,13 +172,13 @@ void handle_init(AppContextRef ctx) {
   text_layer_set_text_color(&firstLayer,GColorWhite);
   text_layer_set_font(&firstLayer,fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 
-  text_layer_init(&secondLayer,GRect(0,75,144,32));
+  text_layer_init(&secondLayer,GRect(0,75,144,35));
   text_layer_set_background_color(&secondLayer,GColorBlack);
   text_layer_set_text_color(&secondLayer,GColorWhite);
-  GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_28));
+  GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_33));
   text_layer_set_font(&secondLayer,font);
 
-  text_layer_init(&thirdLayer,GRect(0,107,144,32));
+  text_layer_init(&thirdLayer,GRect(0,110,144,40));
   text_layer_set_background_color(&thirdLayer,GColorBlack);
   text_layer_set_text_color(&thirdLayer,GColorWhite);
   text_layer_set_font(&thirdLayer,font);
@@ -190,15 +190,16 @@ void handle_init(AppContextRef ctx) {
   PblTm tick_time;
 
   get_time(&tick_time);
-  updateTime(tick_time.tm_hour,tick_time.tm_min);
-
+  // updateTime(tick_time.tm_hour,tick_time.tm_min);
+  updateTime(7,27);
   window_stack_push(&window, true /* Animated */);
 }
 
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
-  updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
+  // updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
+  updateTime(7,27);
 }
 
 void pbl_main(void *params) {
