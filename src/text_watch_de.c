@@ -190,16 +190,16 @@ void handle_init(AppContextRef ctx) {
   PblTm tick_time;
 
   get_time(&tick_time);
-  // updateTime(tick_time.tm_hour,tick_time.tm_min);
-  updateTime(7,27);
+  updateTime(tick_time.tm_hour,tick_time.tm_min);
+  // updateTime(7,27);
   window_stack_push(&window, true /* Animated */);
 }
 
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
-  // updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
-  updateTime(7,27);
+  updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
+  // updateTime(7,27);
 }
 
 void pbl_main(void *params) {
