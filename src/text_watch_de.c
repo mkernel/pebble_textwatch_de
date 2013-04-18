@@ -15,6 +15,10 @@ TextLayer firstLayer;
 TextLayer secondLayer;
 TextLayer thirdLayer;
 
+PropertyAnimation firstLayerAnim;
+PropertyAnimation secondLayerAnim;
+PropertyAnimation thirdLayerAnim;
+
 char *hours[]={
   "Zwölf",
   "Eins",
@@ -149,13 +153,103 @@ void fillHours(unsigned int hour_time,unsigned int minute_time, char *line)
   }
 }
 
-void updateTime(unsigned int hour, unsigned int minute) 
+int lastHour=-1;
+int lastMinute=-1;
+int thisHour;
+int thisMinute;
+
+void finalizeTimeUpdate(Animation *animation, void*data)
 {
-  fillHours(hour,minute,firstLine);
+  lastHour=thisHour;
+  lastMinute=thisMinute;
+}
+
+void continueTimeUpdate(Animation *animation, void *data)
+{
+  fillHours(thisHour,thisMinute,firstLine);
   text_layer_set_text(&firstLayer,firstLine);
-  fillMinutes(minute,secondLine,thirdLine);
+  fillMinutes(thisMinute,secondLine,thirdLine);
   text_layer_set_text(&secondLayer,secondLine);
   text_layer_set_text(&thirdLayer,thirdLine);
+  if(lastHour!=thisHour)
+  {
+    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,&GRect(144,20,144,45),&GRect(0,20,144,45));
+
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,70,144,40),&GRect(0,70,144,40));
+    animation_set_delay(&secondLayerAnim.animation,0.1);
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,110,144,40),&GRect(0,110,144,40));
+    animation_set_delay(&thirdLayerAnim.animation,0.2);
+
+    animation_set_handlers(&thirdLayerAnim.animation,(AnimationHandlers){
+      .started = NULL,
+      .stopped = (AnimationStoppedHandler)finalizeTimeUpdate,
+    },(void*)1);
+
+    animation_schedule(&firstLayerAnim.animation);
+    animation_schedule(&secondLayerAnim.animation);
+    animation_schedule(&thirdLayerAnim.animation);
+  }
+  else if(lastMinute!=thisMinute)
+  {
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,70,144,40),&GRect(0,70,144,40));
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,110,144,40),&GRect(0,110,144,40));
+    animation_set_delay(&thirdLayerAnim.animation,0.1);
+
+    animation_set_handlers(&thirdLayerAnim.animation,(AnimationHandlers){
+      .started = NULL,
+      .stopped = (AnimationStoppedHandler)finalizeTimeUpdate,
+    },(void*)1);
+
+    animation_schedule(&secondLayerAnim.animation);
+    animation_schedule(&thirdLayerAnim.animation);
+  }
+}
+
+void updateTime(unsigned int hour, unsigned int minute) 
+{
+  thisHour=hour;
+  thisMinute=minute;
+  if(lastHour==-1 && lastMinute==-1)
+  {
+    lastHour=hour;
+    lastMinute=minute;
+    continueTimeUpdate(NULL,NULL);
+  }
+  if((unsigned int)lastHour!=hour)
+  {
+    //we have to animate on hour-base
+    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,NULL,&GRect(-144,20,144,45));
+    animation_set_delay(&firstLayerAnim.animation,0.2);
+
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,70,144,40));
+    animation_set_delay(&secondLayerAnim.animation,0.1);
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,110,144,40));
+
+    animation_set_handlers(&firstLayerAnim.animation,(AnimationHandlers){
+      .started = NULL,
+      .stopped = (AnimationStoppedHandler)continueTimeUpdate,
+    },(void*)1);
+
+    animation_schedule(&firstLayerAnim.animation);
+    animation_schedule(&secondLayerAnim.animation);
+    animation_schedule(&thirdLayerAnim.animation);
+  }
+
+  else if((unsigned int)lastMinute!=minute)
+  {
+    //we have to animate on minute-base
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,70,144,40));
+    animation_set_delay(&secondLayerAnim.animation,0.1);
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,110,144,40));
+
+    animation_set_handlers(&secondLayerAnim.animation,(AnimationHandlers){
+      .started = NULL,
+      .stopped = (AnimationStoppedHandler)continueTimeUpdate,
+    },(void*)1);
+
+    animation_schedule(&secondLayerAnim.animation);
+    animation_schedule(&thirdLayerAnim.animation);
+  }
 }
 
 
@@ -167,12 +261,12 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Text Watch");
   window_set_background_color(&window,GColorBlack);
 
-  text_layer_init(&firstLayer,GRect(0,30,144,45));
+  text_layer_init(&firstLayer,GRect(0,20,144,45));
   text_layer_set_background_color(&firstLayer,GColorBlack);
   text_layer_set_text_color(&firstLayer,GColorWhite);
   text_layer_set_font(&firstLayer,fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
 
-  text_layer_init(&secondLayer,GRect(0,75,144,35));
+  text_layer_init(&secondLayer,GRect(0,70,144,40));
   text_layer_set_background_color(&secondLayer,GColorBlack);
   text_layer_set_text_color(&secondLayer,GColorWhite);
   GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_33));
@@ -191,7 +285,7 @@ void handle_init(AppContextRef ctx) {
 
   get_time(&tick_time);
   updateTime(tick_time.tm_hour,tick_time.tm_min);
-  // updateTime(7,27);
+  // updateTime(7,52);
   window_stack_push(&window, true /* Animated */);
 }
 
@@ -199,7 +293,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
   updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
-  // updateTime(7,27);
+  // updateTime(7,52);
 }
 
 void pbl_main(void *params) {
