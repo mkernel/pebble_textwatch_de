@@ -7,7 +7,7 @@
 PBL_APP_INFO(MY_UUID,
              "Text Watch DE", "Enno Welbers",
              1, 0, /* App version */
-             DEFAULT_MENU_ICON,
+             RESOURCE_ID_ICON,
              APP_INFO_WATCH_FACE);
 
 Window window;

@@ -11,6 +11,11 @@
 	   	"type":"font",
 	   	"defName":"SUBHEADINGFONT_33",
 	   	"file":"Arial-Narrow.ttf"
+	   },
+	   {
+	   	"type":"png",
+	   	"defName":"ICON",
+	   	"file":"menu_icon.png"
 	   }
 	  ]
 }
