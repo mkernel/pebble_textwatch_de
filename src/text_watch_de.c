@@ -14,6 +14,7 @@ Window window;
 TextLayer firstLayer;
 TextLayer secondLayer;
 TextLayer thirdLayer;
+TextLayer fourthLayer;
 
 PropertyAnimation firstLayerAnim;
 PropertyAnimation secondLayerAnim;
@@ -91,6 +92,7 @@ char *minutesbuilding[]={
 char firstLine[100];
 char secondLine[100];
 char thirdLine[100];
+char fourthLine[100];
 
 void fillMinutes(unsigned int minute_time, char *firstLine, char *secondLine)
 {
@@ -173,11 +175,11 @@ void continueTimeUpdate(Animation *animation, void *data)
   text_layer_set_text(&thirdLayer,thirdLine);
   if(lastHour!=thisHour)
   {
-    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,&GRect(144,20,144,45),&GRect(0,20,144,45));
+    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,&GRect(144,0,144,45),&GRect(0,0,144,45));
 
-    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,70,144,40),&GRect(0,70,144,40));
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,50,144,40),&GRect(0,50,144,40));
     animation_set_delay(&secondLayerAnim.animation,0.1);
-    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,110,144,40),&GRect(0,110,144,40));
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,90,144,40),&GRect(0,90,144,40));
     animation_set_delay(&thirdLayerAnim.animation,0.2);
 
     animation_set_handlers(&thirdLayerAnim.animation,(AnimationHandlers){
@@ -191,8 +193,8 @@ void continueTimeUpdate(Animation *animation, void *data)
   }
   else if(lastMinute!=thisMinute)
   {
-    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,70,144,40),&GRect(0,70,144,40));
-    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,110,144,40),&GRect(0,110,144,40));
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,&GRect(144,50,144,40),&GRect(0,50,144,40));
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,&GRect(144,90,144,40),&GRect(0,90,144,40));
     animation_set_delay(&thirdLayerAnim.animation,0.1);
 
     animation_set_handlers(&thirdLayerAnim.animation,(AnimationHandlers){
@@ -218,12 +220,12 @@ void updateTime(unsigned int hour, unsigned int minute)
   if((unsigned int)lastHour!=hour)
   {
     //we have to animate on hour-base
-    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,NULL,&GRect(-144,20,144,45));
+    property_animation_init_layer_frame(&firstLayerAnim,&firstLayer.layer,NULL,&GRect(-144,0,144,45));
     animation_set_delay(&firstLayerAnim.animation,0.2);
 
-    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,70,144,40));
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,50,144,40));
     animation_set_delay(&secondLayerAnim.animation,0.1);
-    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,110,144,40));
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,90,144,40));
 
     animation_set_handlers(&firstLayerAnim.animation,(AnimationHandlers){
       .started = NULL,
@@ -238,9 +240,9 @@ void updateTime(unsigned int hour, unsigned int minute)
   else if((unsigned int)lastMinute!=minute)
   {
     //we have to animate on minute-base
-    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,70,144,40));
+    property_animation_init_layer_frame(&secondLayerAnim,&secondLayer.layer,NULL,&GRect(-144,50,144,40));
     animation_set_delay(&secondLayerAnim.animation,0.1);
-    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,110,144,40));
+    property_animation_init_layer_frame(&thirdLayerAnim,&thirdLayer.layer,NULL,&GRect(-144,90,144,40));
 
     animation_set_handlers(&secondLayerAnim.animation,(AnimationHandlers){
       .started = NULL,
@@ -252,6 +254,11 @@ void updateTime(unsigned int hour, unsigned int minute)
   }
 }
 
+void updateDate(PblTm *time)
+{
+  string_format_time(fourthLine,100,"%d.%m.%Y",time);
+  text_layer_set_text(&fourthLayer,fourthLine);
+}
 
 void handle_init(AppContextRef ctx) {
   (void)ctx;
@@ -261,30 +268,39 @@ void handle_init(AppContextRef ctx) {
   window_init(&window, "Text Watch");
   window_set_background_color(&window,GColorBlack);
 
-  text_layer_init(&firstLayer,GRect(0,20,144,45));
+  text_layer_init(&firstLayer,GRect(0,0,144,45));
   text_layer_set_background_color(&firstLayer,GColorBlack);
   text_layer_set_text_color(&firstLayer,GColorWhite);
-  text_layer_set_font(&firstLayer,fonts_get_system_font(FONT_KEY_GOTHAM_42_BOLD));
+  text_layer_set_font(&firstLayer,fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
 
-  text_layer_init(&secondLayer,GRect(0,70,144,40));
+  text_layer_init(&secondLayer,GRect(0,50,144,40));
   text_layer_set_background_color(&secondLayer,GColorBlack);
   text_layer_set_text_color(&secondLayer,GColorWhite);
   GFont font=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_33));
   text_layer_set_font(&secondLayer,font);
 
-  text_layer_init(&thirdLayer,GRect(0,110,144,40));
+  text_layer_init(&thirdLayer,GRect(0,90,144,40));
   text_layer_set_background_color(&thirdLayer,GColorBlack);
   text_layer_set_text_color(&thirdLayer,GColorWhite);
   text_layer_set_font(&thirdLayer,font);
 
+  GFont subfont=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_SUBHEADINGFONT_18));
+  text_layer_init(&fourthLayer,GRect(0,150,144,20));
+  text_layer_set_background_color(&fourthLayer,GColorBlack);
+  text_layer_set_text_color(&fourthLayer,GColorWhite);
+  text_layer_set_font(&fourthLayer,subfont);
+  text_layer_set_text_alignment(&fourthLayer,GTextAlignmentRight);
+
   layer_add_child(&window.layer,&firstLayer.layer);
   layer_add_child(&window.layer,&secondLayer.layer);
   layer_add_child(&window.layer,&thirdLayer.layer);
+  layer_add_child(&window.layer,&fourthLayer.layer);
 
   PblTm tick_time;
 
   get_time(&tick_time);
   updateTime(tick_time.tm_hour,tick_time.tm_min);
+  updateDate(&tick_time);
   // updateTime(7,52);
   window_stack_push(&window, true /* Animated */);
 }
@@ -293,6 +309,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
   updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
+  updateDate(t->tick_time);
   // updateTime(7,52);
 }
 

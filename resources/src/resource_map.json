@@ -13,6 +13,11 @@
 	   	"file":"Arial-Narrow.ttf"
 	   },
 	   {
+	   	"type":"font",
+	   	"defName":"SUBHEADINGFONT_18",
+	   	"file":"Arial-Narrow.ttf"
+	   },
+	   {
 	   	"type":"png",
 	   	"defName":"ICON",
 	   	"file":"menu_icon.png"
