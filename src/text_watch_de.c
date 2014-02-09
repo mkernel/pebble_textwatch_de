@@ -301,15 +301,22 @@ void handle_init(AppContextRef ctx) {
   get_time(&tick_time);
   updateTime(tick_time.tm_hour,tick_time.tm_min);
   updateDate(&tick_time);
+  last_day=tick_time->tm_yday;
   // updateTime(7,52);
   window_stack_push(&window, true /* Animated */);
 }
+
+int last_day;
 
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   (void)t;
   (void)ctx;
   updateTime(t->tick_time->tm_hour,t->tick_time->tm_min);
-  updateDate(t->tick_time);
+  if(last_day!=t->tick_time->tm_yday)
+  {
+    updateDate(t->tick_time);
+    last_day=t->tick_time->tm_yday;
+  }
   // updateTime(7,52);
 }
 
